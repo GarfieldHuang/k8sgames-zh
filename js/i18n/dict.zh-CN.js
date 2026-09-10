@@ -23,6 +23,7 @@ const ZH_CN = {
   "Stats": "统计",
   "Statistics": "统计数据",
   "Controls": "操作方式",
+  "Chinese localization by": "中文化",
   "Show Hint": "显示提示",
   "Investigation": "调查",
   "Right-click": "右键点擊",

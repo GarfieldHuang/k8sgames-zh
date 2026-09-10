@@ -26,6 +26,7 @@ const ZH_TW = {
   'Stats': '統計',
   'Statistics': '統計資料',
   'Controls': '操作方式',
+  'Chinese localization by': '中文化',
   'Show Hint': '顯示提示',
   'Investigation': '調查',
   'Right-click': '右鍵點擊',
