@@ -85,7 +85,7 @@ export class CommandBar {
             </button>
           </div>
         </div>
-        <div id="cmd-output" class="px-4 py-2 max-h-64 overflow-y-auto font-mono text-sm scrollbar-thin"></div>
+        <div id="cmd-output" data-i18n-skip class="px-4 py-2 max-h-64 overflow-y-auto font-mono text-sm scrollbar-thin"></div>
         <div class="relative px-4 py-3 border-t border-white/5">
           <div class="flex items-center gap-2">
             <span class="text-green-400 text-sm font-mono shrink-0">$ kubectl</span>

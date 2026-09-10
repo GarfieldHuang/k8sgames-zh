@@ -741,7 +741,9 @@ html, body {
 .settings-panel {
   position: fixed;
   inset: 0;
-  z-index: 95;
+  /* Must sit above #main-menu (z-index 100), which is opaque — otherwise the
+     menu's Settings button opens a panel nobody can see. */
+  z-index: 111;
   display: none;
   align-items: center;
   justify-content: center;
@@ -1608,4 +1610,218 @@ html, body {
   #draw-props {
     max-height: 60vh !important;
   }
+}
+
+/* ---- Level result: non-blocking banner + re-openable modal ---- */
+
+.modal-hint {
+  margin-top: 1rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.modal-hint kbd {
+  padding: 1px 5px;
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.7rem;
+}
+
+.result-banner {
+  position: fixed;
+  top: 4.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 95;
+  display: none;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: min(560px, calc(100vw - 2rem));
+  padding: 0.6rem 0.75rem 0.6rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(63, 185, 80, 0.45);
+  background: rgba(22, 27, 34, 0.92);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  animation: slideDown 0.35s ease;
+}
+
+.result-banner.active {
+  display: flex;
+}
+
+.result-banner-stars {
+  flex-shrink: 0;
+  font-size: 1.05rem;
+  letter-spacing: 1px;
+  color: var(--status-yellow);
+}
+
+.result-banner-text {
+  min-width: 0;
+  flex: 1;
+}
+
+.result-banner-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--status-green);
+}
+
+.result-banner-sub {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.result-banner-btn {
+  flex-shrink: 0;
+  padding: 0.35rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid rgba(63, 185, 80, 0.5);
+  background: rgba(63, 185, 80, 0.18);
+  color: #7ee787;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.result-banner-btn:hover {
+  background: rgba(63, 185, 80, 0.32);
+  color: #fff;
+}
+
+.result-banner-close {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.result-banner-close:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+@media (max-width: 640px) {
+  .result-banner {
+    top: auto;
+    bottom: 5.5rem;
+  }
+  .result-banner-sub {
+    display: none;
+  }
+}
+
+/* ---- Language switcher ---- */
+
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-top: 1.25rem;
+  padding: 3px;
+  border-radius: 10px;
+  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.lang-switch-inline {
+  margin-top: 0;
+  width: 100%;
+  justify-content: stretch;
+}
+
+.lang-switch-inline .lang-btn {
+  flex: 1;
+  text-align: center;
+}
+
+.lang-btn {
+  padding: 0.35rem 0.85rem;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.lang-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.lang-btn.active {
+  color: #fff;
+  background: rgba(50, 108, 229, 0.55);
+}
+
+/* CJK needs a font stack that actually has the glyphs, and a little more
+   line-height than the Latin defaults were tuned for. */
+:root[data-lang="zh-TW"],
+:root[data-lang="zh-CN"] {
+  --cjk-font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Microsoft JhengHei", "Microsoft YaHei", "PingFang TC", "PingFang SC",
+    "Noto Sans CJK TC", "Noto Sans CJK SC", "Hiragino Sans GB", sans-serif;
+}
+
+:root[data-lang="zh-TW"] body,
+:root[data-lang="zh-CN"] body {
+  font-family: var(--cjk-font);
+}
+
+:root[data-lang="zh-TW"] .menu-card-desc,
+:root[data-lang="zh-CN"] .menu-card-desc,
+:root[data-lang="zh-TW"] .modal-body,
+:root[data-lang="zh-CN"] .modal-body,
+:root[data-lang="zh-TW"] .objective-label,
+:root[data-lang="zh-CN"] .objective-label {
+  line-height: 1.75;
+  letter-spacing: 0.01em;
+}
+
+/* Keep monospace surfaces (kubectl, YAML, describe) in a Latin mono face —
+   they render untranslated English on purpose. */
+:root[data-lang="zh-TW"] pre,
+:root[data-lang="zh-CN"] pre,
+:root[data-lang="zh-TW"] code,
+:root[data-lang="zh-CN"] code,
+:root[data-lang="zh-TW"] .font-mono,
+:root[data-lang="zh-CN"] .font-mono {
+  font-family: "JetBrains Mono", "SF Mono", ui-monospace, SFMono-Regular,
+    Menlo, Consolas, monospace;
+}
+
+@media (max-width: 640px) {
+  .lang-btn {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.7rem;
+  }
+}
+
+.lang-switch-row {
+  margin-top: 0;
+}
+
+.lang-switch-row .lang-btn {
+  padding: 0.28rem 0.6rem;
+  font-size: 0.7rem;
 }

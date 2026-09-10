@@ -64,6 +64,11 @@ export class SettingsPanel {
 
         <div class="px-6 py-4 space-y-6">
           <div>
+            <div class="text-white/60 text-xs font-semibold uppercase tracking-wider mb-3">Language</div>
+            <div class="lang-switch lang-switch-inline" data-lang-switch data-i18n-skip role="group" aria-label="Language"></div>
+          </div>
+
+          <div>
             <div class="text-white/60 text-xs font-semibold uppercase tracking-wider mb-3">Difficulty</div>
             <div class="grid grid-cols-2 gap-2">
               ${Object.entries(DIFFICULTY_PRESETS).map(([key, preset]) => `

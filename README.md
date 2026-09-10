@@ -99,3 +99,81 @@ Three.js r152 + Tailwind CSS CDN + vanilla ES6 modules. No build step, no depend
 ## License
 
 Apache-2.0
+
+---
+
+# Fork Notes — Chinese localization + non-blocking level results
+
+This is a fork of [rohitg00/k8sgames](https://github.com/rohitg00/k8sgames) (Apache-2.0).
+All credit for the game itself goes upstream; this fork adds two things and still has
+no build step — everything is plain ES modules.
+
+這是 [rohitg00/k8sgames](https://github.com/rohitg00/k8sgames) 的分支，加了繁體／簡體中文介面，
+並且讓過關時的成績視窗不再蓋住畫面。
+
+## 1. Level results no longer cover the screen
+
+Clearing a level used to immediately throw up a full-screen modal with **Menu** /
+**Next Level**, hiding the cluster you had just finished building.
+
+Now finishing a level shows a small non-blocking banner at the top of the screen
+(stars, level name, time/efficiency/XP) and leaves the cluster fully visible.
+
+Re-open the full results dialog any time via:
+
+| Way | Where |
+|-----|-------|
+| **View Results** | button on the banner |
+| **Results** | green star button in the bottom toolbar |
+| `R` | keyboard shortcut |
+
+The dialog itself gained a **Keep Viewing** button that just closes it, and `Esc`
+closes it too (instead of dumping you back to the main menu). **Next Level** hides
+itself on the last level. The banner has an `×` to dismiss it; the toolbar button
+and `R` keep working until you leave the level.
+
+Code: `index.html` — `_fillLevelResult`, `_showResultBanner`, `showLevelResults`,
+`hideLevelResults`, `clearLevelResult`. Styles: `.result-banner` in `style.css`.
+
+## 2. Traditional / Simplified Chinese
+
+A language picker (English / 繁體中文 / 简体中文) sits under the main menu and in
+Settings. The choice is stored in `localStorage` under `k8sgames.lang`.
+
+**Kubernetes terminology stays in English on purpose** — resource kinds (`Pod`,
+`Deployment`, `Service`…), `kubectl` commands, field names (`spec.replicas`), and
+incident codes (`CrashLoopBackOff`, `OOMKilled`). Those are the things you are here
+to learn; translating them would make the game useless as practice.
+
+Simulated tool output is never touched either: the `kubectl` terminal
+(`#cmd-output`, marked `data-i18n-skip`) and every `<pre>` / `<code>` block — so
+the YAML and `describe` tabs stay byte-identical to real `kubectl`.
+
+### How it works
+
+`js/i18n/I18n.js` translates the live DOM: it walks text nodes and the `title` /
+`placeholder` / `aria-label` attributes, and a `MutationObserver` re-translates
+anything the game renders later. Each node remembers the English it came from, so
+switching languages — including back to English — is lossless and repeatable.
+
+Translation runs in the observer's own microtask rather than on a timer or
+`requestAnimationFrame`; both are throttled in a background tab, which would leave
+freshly rendered English on screen. Cost is ~0.2 ms per second of gameplay.
+
+To exclude a subtree from translation, add `data-i18n-skip` to it.
+
+### Editing translations
+
+`js/i18n/dict.zh-TW.js` is the **only file you edit by hand.** It holds the
+Traditional Chinese dictionary plus `ZH_TW_PATTERNS` for strings with numbers in
+them (`Completed in 42s with 100% efficiency…`).
+
+`js/i18n/dict.zh-CN.js` is **generated** — do not edit it. After changing zh-TW:
+
+```bash
+cd tools && node gen-zh-cn.mjs
+```
+
+The generator applies a Taiwan→Mainland vocabulary map (網路→网络, 程式→程序,
+記憶體→内存, 預設→默认, 叢集→集群 …) before a Traditional→Simplified character
+pass, and fails loudly if any Traditional character would survive into the output.
